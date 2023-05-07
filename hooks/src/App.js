@@ -5,26 +5,33 @@ import {useEffect, useState } from 'react';
 function App() {
   const [first,setFirst] = useState(0);
   const [second,setSecond] = useState(0);
+  const [greaterValue, setGreaterValue] = useState(null);
+
   useEffect(() => {
+    if (first > second) {
+      setGreaterValue(first);
+    } else if (second > first) {
+      setGreaterValue(second);
+    } else {
+      setGreaterValue(null);
+    }
+  }, [first, second]);
 
-  },[])
-
-  let greaterValue = null;
-  if (first > second) {
-    greaterValue = first;
-  } else if (second > first) {
-    greaterValue = second;
+  let displayValue;
+  if (greaterValue) {
+    displayValue = <p>{greaterValue}</p>;
+  } else {
+    displayValue = <p>Values are equal</p>;
   }
 
   return (
     <div className='hook'>
-      {greaterValue && <p>{greaterValue}</p>}
-      {first === second && <p>values are equal first is {first} second is  {second}</p>}
-      {greaterValue === first && <p>First value is greater</p>}
+      {displayValue}
+      <p>First value is {first}</p>
+      <p>Second value is {second}</p>
       <button onClick={()=> setFirst(first + 1)}>
         change first
       </button>
-      {greaterValue === second && <p>Second value is greater</p>}
       <button onClick={()=> setSecond(second + 1)}>
         change second
       </button>
