@@ -1,40 +1,45 @@
 import logo from './logo.svg';
 import './App.css';
 import {useEffect, useState } from 'react';
+import axios from 'axios';
 
 function App() {
-  const [first,setFirst] = useState(0);
-  const [second,setSecond] = useState(0);
-  const [greaterValue, setGreaterValue] = useState(null);
 
-  useEffect(() => {
-    if (first > second) {
-      setGreaterValue(first);
-    } else if (second > first) {
-      setGreaterValue(second);
-    } else {
-      setGreaterValue(null);
+  const [movies,setMovies] = useState([])
+  const [loading,setLoading] = useState(false)
+  const [error,setError] = useState('')
+  const [movie,setMovie] = useState({})
+  const [value,setValue] = useState('')
+
+  const fetchMedicamets = async () => {
+    setLoading(true)
+    try {
+      const response = await axios.get(`https://jsonplaceholder.typicode.com/todos/${value}`);
+      setMovie(response.data);
+    } catch (error) {
+      alert(error?.message);
+    } finally {
+      setLoading(false)
     }
-  }, [first, second]);
-
-  let displayValue;
-  if (greaterValue) {
-    displayValue = <p>{greaterValue}</p>;
-  } else {
-    displayValue = <p>Values are equal</p>;
   }
 
+  const buttonClick = () => {
+    if (value.length < 3) {
+      fetchMedicamets();
+    }
+  }
+
+  useEffect(() => {
+    if (value.length >= 3) {
+      fetchMedicamets();
+    }
+  }, [value]);
+
   return (
-    <div className='hook'>
-      {displayValue}
-      <p>First value is {first}</p>
-      <p>Second value is {second}</p>
-      <button onClick={()=> setFirst(first + 1)}>
-        change first
-      </button>
-      <button onClick={()=> setSecond(second + 1)}>
-        change second
-      </button>
+    <div>
+      <p>{loading ? 'its loading' : movie?.title}</p>
+      <input placeholder='type id' onChange={(e) => setValue(e.target.value)} />
+      <button onClick={buttonClick}>get data</button>
     </div>
   );
 }
